@@ -17,7 +17,7 @@ export function createSession(socketId: string): Session {
 
 // Join session
 export function joinSession(roomCode: string, socketId: string): Session | undefined {
-  if (!roomCode || socketId) {
+  if (!roomCode || !socketId) {
     return undefined;
   }
  const session = sessions.get(roomCode);
