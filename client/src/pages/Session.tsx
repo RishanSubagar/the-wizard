@@ -7,7 +7,7 @@ export default function Session() {
     const [players, setPlayers] = useState(0);
 
     useEffect(() => {
-        socket.on("plaer-joined", ({ players }: {players: number}) => {
+        socket.on("player-joined", ({ players }: {players: number}) => {
             setPlayers(players);
         });
 
