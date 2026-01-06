@@ -7,7 +7,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/session/:code" element={<Session />} />
+        <Route path="/session/:roomCode" element={<Session />} />
       </Routes>
     </BrowserRouter>
   );

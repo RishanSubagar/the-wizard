@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import socket from "../socket"
 
 export default function Session() {
-    const { code } = useParams();
+    const { roomCode } = useParams();
     const [players, setPlayers] = useState(0);
 
     useEffect(() => {
@@ -18,7 +18,7 @@ export default function Session() {
 
     return (
         <div style={{ padding: 40 }}>
-            <h2>Session Code: {code}</h2>
+            <h2>Session Code: {roomCode}</h2>
             <p>Players connected: {players}</p>
         </div>
     )

@@ -3,20 +3,20 @@ import { useNavigate } from "react-router-dom";
 import socket from "../socket";
 
 export default function Home() {
-    const [code, setCode] = useState<string>("");
+    const [roomCode, setCode] = useState<string>("");
     const navigate = useNavigate();
 
     const createSession = () => {
         socket.emit("create-session");
 
-        socket.once("session-created", ({ code }: { code: string}) => {
-            navigate(`/session/${code}`);
+        socket.once("session-created", ({ roomCode }: { roomCode: string}) => {
+            navigate(`/session/${roomCode}`);
         });
     };
 
     const joinSession = () => {
-        socket.emit("join-session", { code });
-        navigate(`/session/${code}`);
+        socket.emit("join-session", { roomCode });
+        navigate(`/session/${roomCode}`);
     }
 
     return (
@@ -28,8 +28,8 @@ export default function Home() {
         <hr />
 
         <input
-        placeholder="Enter session code"
-        value={code}
+        placeholder="Enter session roomCode"
+        value={roomCode}
         onChange={(e) => setCode(e.target.value.toUpperCase())}
         />
         <button onClick={joinSession}>Join Session</button>
