@@ -24,7 +24,10 @@ export function joinSession(roomCode: string, socketId: string): Session | undef
   if (!session) {
     return undefined;
   }
-  session.players.push(socketId);
+  if (!session.players.indexOf(socketId)) {
+    const updatedSession = addPlayerToSession(session, socketId);
+    sessions.set(roomCode, updatedSession);  // Replace session instead of mutate
+  }
   return session
 }
 
@@ -33,7 +36,16 @@ export function getSession(roomCode: string): Session | undefined {
   return sessions.get(roomCode)
 }
 
-// Helper function
+// Add players
+function addPlayerToSession(session: Session, socketId: string): Session {
+  return {
+    ...session,
+    players: [...session.players, socketId],
+  };
+}
+
+// TODO: make sure collision does not occur
+// Code creation function
 function createRoomCode(length: number): string {
     var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
