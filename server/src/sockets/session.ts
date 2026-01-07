@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { createSession, joinSession, getSession, removePlayer } from "../services/sessionService.js";
+import { createSession, joinSession, getSession, removePlayer } from "../services/sessionService";
 
 /**
  * Registers all session-related socket events
@@ -8,6 +8,10 @@ export function registerSessionSockets(io: Server, socket: Socket) {
     //HOST creates a new session
     socket.on("create-session", () => {
         const session = createSession(socket.id);
+
+        socket.emit("session-created", {
+            roomCode: session.roomCode
+        });
     });
 
     /**

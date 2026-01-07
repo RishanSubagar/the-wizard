@@ -1,4 +1,4 @@
-import type { Session } from "../types/session.js";
+import type { Session } from "../types/session";
 
 // In-memory store
 const sessions = new Map<string, Session>();
