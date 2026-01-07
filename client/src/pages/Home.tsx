@@ -16,7 +16,12 @@ export default function Home() {
 
     const joinSession = () => {
         socket.emit("join-session", { roomCode });
-        navigate(`/session/${roomCode}`);
+
+        socket.once("join-session-error", console.error);
+
+        socket.once("join-success", () => {
+            navigate(`/session/${roomCode}`);
+        });
     }
 
     return (
@@ -30,7 +35,7 @@ export default function Home() {
         <input
         placeholder="Enter session roomCode"
         value={roomCode}
-        onChange={(e) => setCode(e.target.value.toUpperCase())}
+        onChange={(e) => setCode(e.target.value)}
         />
         <button onClick={joinSession}>Join Session</button>
         </div>

@@ -11,6 +11,7 @@ export function createSession(socketId: string): Session {
         players: [socketId]
     }
     sessions.set(roomCode, newSession);
+    console.log(newSession)
     return newSession
 }
 
@@ -35,21 +36,24 @@ export function getSession(roomCode: string): Session | undefined {
 
 export function removePlayer(socketId: string) {
   // Find session containing player
-  for (const [roomCode, session] of sessions.entries()) {
+    for (const [roomCode, session] of sessions.entries()) {
     if (session.players.includes(socketId)) {
-      const updatedSession = removePlayerFromSession(session, socketId);  // Remove player
-      
-      // Handle host disconnect
-      if (session.hostId === socketId) {
-        // Host disconnected - end session
-        sessions.delete(roomCode);
-        return roomCode  // Return room code so host disconnect can be handled
-      } else {
-        sessions.set(roomCode, updatedSession);  // Update session
-      }
-      return
+        const updatedSession = removePlayerFromSession(session, socketId);  // Remove player
+
+        // Handle host disconnect
+        if (session.hostId === socketId) {
+            sessions.delete(roomCode);
+            return roomCode  // Return room code so host disconnect can be handled
+        } else {
+            sessions.set(roomCode, updatedSession);  // Update session
+        }
+        return
     }
   }
+}
+
+export function deleteSession(roomCode: string) {
+    sessions.delete(roomCode);
 }
 
 // Add player helper
