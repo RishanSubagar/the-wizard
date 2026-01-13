@@ -20,9 +20,8 @@ export function registerSessionSockets(io: Server, socket: Socket) {
      * PLAYER joins an existing session
      */
     socket.on("join-session", ({ roomCode }) => {
-        console.log(roomCode);
         const result = joinSession(roomCode, socket.id);
-        console.log("resu;t", result);
+        console.log("Session trying to join:", result);
         if (!result) {
             socket.emit("join-session-error", "Invalid room code or socket ID");
             return;

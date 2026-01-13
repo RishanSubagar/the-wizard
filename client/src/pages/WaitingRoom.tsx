@@ -26,9 +26,7 @@ export default function WaitingRoom() {
 
   return (
     <div className="soft-card">
-      <div className="kawaii-decoration">
-        <h2 className="text-gradient">🎪 Waiting Room</h2>
-      </div>
+      <h2 className="text-gradient">🎪 Waiting Room</h2>
       
       {/* Room Code Display */}
       <div style={{

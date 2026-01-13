@@ -4,6 +4,7 @@ import socket from "../socket";
 
 export default function Home() {
     const [roomCode, setCode] = useState<string>("");
+    const [shake, setShake] = useState(false);
     const navigate = useNavigate();
 
     const createSession = () => {
@@ -21,7 +22,11 @@ export default function Home() {
         
         socket.emit("join-session", { roomCode });
 
-        socket.once("join-session-error", console.error);
+        socket.once("join-session-error", (message: string) => {
+            console.log(message);
+            setShake(true);
+            setTimeout(() => setShake(false), 500); // Remove shake after animation
+        });
 
         socket.once("join-success", () => {
             navigate(`/session/${roomCode}`);
@@ -35,8 +40,8 @@ export default function Home() {
     };
 
     return (
-        <div className="soft-card kawaii-decoration">
-            <h1 className="text-gradient">🎮 Session Game</h1>
+        <div className="soft-card emoji-decoration">
+            <h1 className="text-gradient">THE WIZARD</h1>
             <p style={{ color: 'var(--text-light)', marginBottom: '2rem' }}>
                 Create or join a game session with friends
             </p>
@@ -63,7 +68,7 @@ export default function Home() {
                     e.currentTarget.style.boxShadow = 'var(--shadow-md)';
                 }}
             >
-                ✨ Create New Session
+                Create New Game
             </button>
 
             <div style={{ 
@@ -88,9 +93,9 @@ export default function Home() {
                     placeholder="Enter session code"
                     value={roomCode}
                     onChange={(e) => setCode(e.target.value)}
-                    onKeyPress={handleKeyPress}
+                    onKeyDown={handleKeyPress}
                     style={{
-                        width: '100%',
+                        width: 'calc(100% - 2rem)',
                         padding: '1rem',
                         borderRadius: 'var(--radius-md)',
                         border: '2px solid var(--primary-light)',
@@ -99,7 +104,9 @@ export default function Home() {
                         fontSize: '1rem',
                         textAlign: 'center',
                         marginBottom: '1rem',
-                        transition: 'border-color var(--transition-fast)'
+                        transition: 'border-color var(--transition-fast)',
+                        boxSizing: 'border-box',
+                        animation: shake ? 'shake 0.5s' : 'none'
                     }}
                     onFocus={(e) => {
                         e.target.style.borderColor = 'var(--primary)';

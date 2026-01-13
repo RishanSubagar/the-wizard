@@ -17,29 +17,31 @@
   transition: transform var(--transition-normal), box-shadow var(--transition-normal);
 }
 
-.soft-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
+/* Animation */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
 }
 
-/* Kawaii elements */
-.kawaii-decoration {
+/* emoji elements */
+.emoji-decoration {
   position: relative;
 }
 
-.kawaii-decoration::before {
-  content: "🌸";
+.emoji-decoration::before {
+  content: "🪄";
   position: absolute;
-  top: -20px;
+  top: -18px;
   left: 20px;
   font-size: 1.5rem;
   animation: float 3s ease-in-out infinite;
 }
 
-.kawaii-decoration::after {
+.emoji-decoration::after {
   content: "✨";
   position: absolute;
-  bottom: -20px;
+  bottom: -10px;
   right: 20px;
   font-size: 1.5rem;
   animation: float 3s ease-in-out infinite reverse;

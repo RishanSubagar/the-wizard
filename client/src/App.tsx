@@ -9,10 +9,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div style={{
       minHeight: '100vh',
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       justifyContent: 'center',
       background: 'linear-gradient(135deg, var(--background) 0%, #f5f0ff 100%)',
-      padding: '20px'
+      paddingTop: "30px"
     }}>
       {children}
     </div>

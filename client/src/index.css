@@ -1,16 +1,20 @@
 :root {
-  /* Soft tech / Kawaii Minimalism color palette */
-  --primary: #ff9ac6;
-  --primary-light: #ffc7e0;
-  --secondary: #a3d8ff;
-  --secondary-light: #d1ecff;
-  --accent: #ffd166;
-  --background: #fef7ff;
-  --surface: #ffffff;
-  --text: #5a5475;
-  --text-light: #8a849f;
-  --success: #a0e7a0;
-  --error: #ffb0b0;
+--primary: #7b8cff;          /* muted periwinkle */
+--primary-light: #e3e7ff;
+
+--secondary: #6ec6e8;        /* soft cyan */
+--secondary-light: #e6f6fc;
+
+--accent: #f2c94c;           /* restrained warm accent */
+
+--background: #f9fafc;       /* cool off-white */
+--surface: #ffffff;
+
+--text: #2e2f3e;             /* charcoal navy */
+--text-light: #6b6f85;
+
+--success: #6fdc9b;
+--error: #f28b82;
   
   /* Soft shadows */
   --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
