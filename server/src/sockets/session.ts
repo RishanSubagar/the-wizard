@@ -78,4 +78,17 @@ export function registerSessionSockets(io: Server, socket: Socket) {
             io.to(roomCode).disconnectSockets();
         }
     });
+
+    socket.on("start-game", (roomCode: string) => {
+        const session = getSession(roomCode);
+        if (!session) return;
+
+        // Host check
+        if (session.hostId !== socket.id) {
+            socket.emit("start-game-error", "Only host can start the game.");
+            return;
+        }
+
+        io.to(roomCode).emit("game-started");
+    })
 }

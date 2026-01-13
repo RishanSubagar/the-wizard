@@ -6,12 +6,18 @@ export default function WaitingRoom() {
   const { roomCode } = useParams();
   const [players, setPlayers] = useState<string[]>([]);  // list of players
   const [playerCount, setPlayerCount] = useState(0);
+  const isHost = players[0] === socket.id;
   const navigate = useNavigate();
 
   const leaveSession = () => {
     socket.emit("leave-session", { roomCode });
     navigate("/");
   };
+
+  const startGame = () => {
+    socket.emit("start-game", { roomCode });
+    // TODO: Send to game screen
+  }
 
   useEffect(() => {
     socket.on("session-updated", (players: string[]) => {
@@ -129,29 +135,28 @@ export default function WaitingRoom() {
 
       {/* Action Buttons */}
       <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-        <button
-          onClick={() => {
-            // Copy room code to clipboard
-            navigator.clipboard.writeText(roomCode || '');
-          }}
-          style={{
-            background: 'var(--surface)',
-            color: 'var(--text)',
-            padding: '0.75rem 1.5rem',
-            borderRadius: 'var(--radius-md)',
-            border: '2px solid var(--primary-light)'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'var(--primary-light)';
-            e.currentTarget.style.color = 'white';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'var(--surface)';
-            e.currentTarget.style.color = 'var(--text)';
-          }}
-        >
-          📋 Copy Code
-        </button>
+        {isHost && (
+          <button
+            onClick={startGame}
+            style={{
+              background: "var(--primary)",
+              color: "var(--success)",
+              padding: "0.75rem 1.5rem",
+              borderRadius: "var(--radius-md)",
+              border: "2px solid var(--primary)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--primary)';
+              e.currentTarget.style.color = 'white';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'var(--surface)';
+              e.currentTarget.style.color = 'var(--text-light)';
+            }}
+          >
+            ▶️ Start Game
+          </button>
+        )}
         
         <button
           onClick={leaveSession}
