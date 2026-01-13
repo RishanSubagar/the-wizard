@@ -15,6 +15,7 @@ export default function WaitingRoom() {
 
   useEffect(() => {
     socket.on("session-updated", (players: string[]) => {
+      console.log("session-updated received", players);
       setPlayers(players);
       setPlayerCount(players.length);
     });
@@ -23,6 +24,9 @@ export default function WaitingRoom() {
       alert("Session ended");
       navigate("/");
     });
+
+    // Request the current state
+    socket.emit("get-session", roomCode);
 
     return () => {
       socket.off("session-updated");

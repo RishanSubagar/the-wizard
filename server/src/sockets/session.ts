@@ -11,6 +11,10 @@ export function registerSessionSockets(io: Server, socket: Socket) {
     socket.on("create-session", () => {
         const session = createSession(socket.id);
 
+        // Join socket
+        socket.join(session.roomCode); 
+
+        // Emit messages to UI
         socket.emit("session-created", {
             roomCode: session.roomCode
         });
