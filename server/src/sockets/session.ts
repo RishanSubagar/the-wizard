@@ -14,6 +14,7 @@ export function registerSessionSockets(io: Server, socket: Socket) {
         socket.emit("session-created", {
             roomCode: session.roomCode
         });
+        socket.emit("session-updated", session.players)
     });
 
     /**
@@ -31,7 +32,7 @@ export function registerSessionSockets(io: Server, socket: Socket) {
         socket.emit("join-success");
 
         // Notify everyone in room (including host)
-        io.to(roomCode).emit("player-joined", result.players);
+        io.to(roomCode).emit("session-updated", result.players);
     });
 
     /**
@@ -47,7 +48,21 @@ export function registerSessionSockets(io: Server, socket: Socket) {
         socket.leave(roomCode);
 
         // Notify remaining players
-        io.to(roomCode).emit("player-left", session.players);
+        io.to(roomCode).emit("session-updated", session.players);
+    });
+
+    /**
+     * Handle refreshes / reconnects
+     */
+    socket.on("get-session", (roomCode: string) => {
+        const session = getSession(roomCode);
+        if (!session) {
+            socket.emit("session-ended");
+            return;
+        }
+
+        // Sync full state on page load
+        socket.emit("session-updated", session.players);
     });
 
     /**

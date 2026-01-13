@@ -1,9 +1,10 @@
 import type { Session } from "../types/session";
 
 // In-memory store
-const sessions = new Map<string, Session>();
+export const sessions = new Map<string, Session>();
 
 export function createSession(socketId: string): Session {
+    debugger;
     const roomCode = createRoomCode(5);
     const newSession = {
         roomCode: roomCode,
@@ -16,6 +17,7 @@ export function createSession(socketId: string): Session {
 }
 
 export function joinSession(roomCode: string, socketId: string): Session | undefined {
+    debugger;
     if (!roomCode || !socketId) {
         return undefined;
     }
@@ -26,8 +28,9 @@ export function joinSession(roomCode: string, socketId: string): Session | undef
     if (!session.players.includes(socketId)) {
         const updatedSession = addPlayerToSession(session, socketId);
         sessions.set(roomCode, updatedSession);  // Replace session instead of mutate
+        return updatedSession;
     }
-    return session
+    return session;
 }
 
 export function getSession(roomCode: string): Session | undefined {

@@ -4,8 +4,8 @@ import socket from "../socket";
 
 export default function WaitingRoom() {
   const { roomCode } = useParams();
-  const [playerCount, setPlayerCount] = useState(1);
-  const [players, setPlayers] = useState<string[]>(['You']);
+  const [players, setPlayers] = useState<string[]>([]);  // list of players
+  const [playerCount, setPlayerCount] = useState(0);
   const navigate = useNavigate();
 
   const leaveSession = () => {
@@ -14,15 +14,21 @@ export default function WaitingRoom() {
   };
 
   useEffect(() => {
-    socket.on("session-update", ({ players: updatedPlayers }) => {
-      setPlayerCount(updatedPlayers.length);
-      setPlayers(updatedPlayers);
+    socket.on("session-updated", (players: string[]) => {
+      setPlayers(players);
+      setPlayerCount(players.length);
+    });
+
+    socket.on("session-ended", () => {
+      alert("Session ended");
+      navigate("/");
     });
 
     return () => {
-      socket.off("session-update");
+      socket.off("session-updated");
+      socket.off("session-ended");
     };
-  }, []);
+  }, [roomCode]);
 
   return (
     <div className="soft-card">
