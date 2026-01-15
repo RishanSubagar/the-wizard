@@ -1,4 +1,5 @@
-import type { Session } from "../types/session";
+import type { Session } from "../../../shared/types/session";
+import type { Player } from "../../../shared/types/player";
 
 // In-memory store
 export const sessions = new Map<string, Session>();
@@ -9,7 +10,8 @@ export function createSession(socketId: string): Session {
     const newSession = {
         roomCode: roomCode,
         hostId: socketId,
-        players: [socketId]
+        players: [{ socketId }],
+        started: false
     }
     sessions.set(roomCode, newSession);
     console.log(newSession)
@@ -25,7 +27,7 @@ export function joinSession(roomCode: string, socketId: string): Session | undef
     if (!session) {
         return undefined;
     }
-    if (!session.players.includes(socketId)) {
+    if (!session.players.some(player => player.socketId === socketId)) {
         const updatedSession = addPlayerToSession(session, socketId);
         sessions.set(roomCode, updatedSession);  // Replace session instead of mutate
         return updatedSession;
@@ -40,7 +42,7 @@ export function getSession(roomCode: string): Session | undefined {
 export function removePlayer(socketId: string) {
   // Find session containing player
     for (const [roomCode, session] of sessions.entries()) {
-    if (session.players.includes(socketId)) {
+    if (session.players.some(player => player.socketId === socketId)) {
         const updatedSession = removePlayerFromSession(session, socketId);  // Remove player
 
         // Handle host disconnect
@@ -63,7 +65,7 @@ export function deleteSession(roomCode: string) {
 function addPlayerToSession(session: Session, socketId: string): Session {
     return {
         ...session,
-        players: [...session.players, socketId],
+        players: [...session.players, { socketId }],
     };
 }
 
@@ -71,7 +73,7 @@ function addPlayerToSession(session: Session, socketId: string): Session {
 function removePlayerFromSession(session: Session, socketId: string) {
     return {
         ...session,
-        players: session.players.filter(id => id !== socketId),
+        players: session.players.filter((player: Player) => player.socketId !== socketId),
     };
 }
 

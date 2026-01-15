@@ -1,5 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { createSession, joinSession, getSession, removePlayer, deleteSession } from "../services/sessionService";
+import { Player } from "../../../shared/types/player";
 
 /**
  * Registers all session-related socket events
@@ -89,6 +90,23 @@ export function registerSessionSockets(io: Server, socket: Socket) {
             return;
         }
 
-        io.to(roomCode).emit("game-started");
-    })
+        const players = session.players;
+
+        // Pick random imposter
+        const imposterIndex = Math.floor(Math.random() * players.length);
+
+        players.forEach((player: Player, index: number) => {
+            player.role = index === imposterIndex ? "imposter" : "citizen";
+        });
+
+        session.started = true;
+
+        // Send each player their role privately
+        players.forEach((player: Player) => {
+            io.to(player.socketId).emit("game-started", {
+                role: player.role,
+                roomCode: session.roomCode
+            });
+        });
+    });
 }

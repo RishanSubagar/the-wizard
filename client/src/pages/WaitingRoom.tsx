@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import type { Player } from "../../../shared/types/player";
 import socket from "../socket";
 
 export default function WaitingRoom() {
   const { roomCode } = useParams();
-  const [players, setPlayers] = useState<string[]>([]);  // list of players
+  const [players, setPlayers] = useState<Player[]>([]);  // list of players
   const [playerCount, setPlayerCount] = useState(0);
-  const isHost = players[0] === socket.id;
+  const isHost = players[0]?.socketId === socket.id;
   const navigate = useNavigate();
 
   const leaveSession = () => {
@@ -15,12 +16,11 @@ export default function WaitingRoom() {
   };
 
   const startGame = () => {
-    socket.emit("start-game", { roomCode });
-    // TODO: Send to game screen
+    socket.emit("start-game", roomCode);
   }
 
   useEffect(() => {
-    socket.on("session-updated", (players: string[]) => {
+    socket.on("session-updated", (players: Player[]) => {
       console.log("session-updated received", players);
       setPlayers(players);
       setPlayerCount(players.length);
@@ -39,6 +39,16 @@ export default function WaitingRoom() {
       socket.off("session-ended");
     };
   }, [roomCode]);
+
+  useEffect(() => {
+    socket.on("game-started", ({ roomCode }) => {
+      navigate(`/game/${roomCode}`);
+    });
+
+    return () => {
+      socket.off("game-started");
+    };
+  }, []);
 
   return (
     <div className="soft-card">
@@ -104,8 +114,8 @@ export default function WaitingRoom() {
                   animation: index === 0 ? 'pulse 2s infinite' : 'none'
                 }}
               >
-                <span>{index === 0 ? '👑' : '👤'}</span>
-                <span>{player}</span>
+                <span>{index === 0 ? '👑' : '🤺'}</span>
+                <span>{player.socketId}</span>
               </div>
             ))}
           </div>
@@ -139,8 +149,8 @@ export default function WaitingRoom() {
           <button
             onClick={startGame}
             style={{
-              background: "var(--primary)",
-              color: "var(--success)",
+              background: "var(--surface)",
+              color: "var(--text-light)",
               padding: "0.75rem 1.5rem",
               borderRadius: "var(--radius-md)",
               border: "2px solid var(--primary)",

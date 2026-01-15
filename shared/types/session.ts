@@ -1,7 +1,10 @@
+import { Player } from "./player"
+
 type Session = {
   roomCode: string;
   hostId: string;
-  players: string[];
+  players: Player[];
+  started: boolean;
 };
 
 export type { Session };

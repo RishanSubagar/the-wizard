@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import WaitingRoom from "./pages/WaitingRoom";
+import GameRoom from "./pages/GameRoom";
 import "./App.css";
 
 // Layout wrapper for consistent styling
@@ -26,6 +27,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/session/:roomCode" element={<WaitingRoom />} />
+          <Route path="/game/:roomCode" element={<GameRoom />} />
         </Routes>
       </Layout>
     </BrowserRouter>
