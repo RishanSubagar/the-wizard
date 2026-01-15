@@ -1,41 +1,34 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import socket from "../socket";
-import type { Session } from "../../../shared/types/session";
 
 export default function GameRoom() {
-  const { roomCode } = useParams<{ roomCode: string }>();
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState<"CITIZEN" | "IMPOSTER" | null>(null);
 
   useEffect(() => {
-    if (!roomCode) return;
+    const handleAssignRole = ({ role }: { role: "CITIZEN" | "IMPOSTER" }) => {
+      console.log("Role received:", role);
+      setRole(role);
+    };
 
-    socket.emit("get-session", roomCode);
-
-    socket.on("session-updated", (players) => {
-      setSession((prev) => prev ? { ...prev, players } : null);
-      setLoading(false);
-    });
-
-    socket.on("session-ended", () => {
-      setSession(null);
-      setLoading(false);
-    });
+    socket.on("assign-role", handleAssignRole);
 
     return () => {
-      socket.off("session-updated");
-      socket.off("session-ended");
+      socket.off("assign-role", handleAssignRole);
     };
-  }, [roomCode]);
-
-  if (loading) return <div>Loading...</div>;
-  if (!session) return <div>Session not found</div>;
+  }, []);
 
   return (
-    <div>
-      <h1>Game Room: {roomCode}</h1>
-      <p>Players: {session.players.length}</p>
+    <div className="game-screen">
+      {role === null ? (
+        <h2>Preparing your role...</h2>
+      ) : (
+        <div className="role-reveal">
+          <h1>YOU ARE...</h1>
+          <h2 className={`role ${role.toLowerCase()}`}>
+            {role === "IMPOSTER" ? "AN IMPOSTER" : "A CITIZEN"}
+          </h2>
+        </div>
+      )}
     </div>
   );
 }

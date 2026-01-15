@@ -80,9 +80,15 @@ export function registerSessionSockets(io: Server, socket: Socket) {
         }
     });
 
+    /**
+     * Start game and assign roles
+     */
     socket.on("start-game", (roomCode: string) => {
+        console.log("start-game event received for room:", roomCode);
         const session = getSession(roomCode);
         if (!session) return;
+
+        session.started = true;
 
         // Host check
         if (session.hostId !== socket.id) {
@@ -99,14 +105,16 @@ export function registerSessionSockets(io: Server, socket: Socket) {
             player.role = index === imposterIndex ? "imposter" : "citizen";
         });
 
-        session.started = true;
+        // 2️⃣ Tell everyone to navigate to the game screen
+        io.to(roomCode).emit("game-started", { roomCode });
 
-        // Send each player their role privately
-        players.forEach((player: Player) => {
-            io.to(player.socketId).emit("game-started", {
+        // 3️⃣ AFTER clients mount GameRoom, send roles privately
+        setTimeout(() => {
+            session.players.forEach(player => {
+            io.to(player.socketId).emit("assign-role", {
                 role: player.role,
-                roomCode: session.roomCode
             });
-        });
+            });
+        }, 300);
     });
 }

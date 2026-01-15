@@ -17,38 +17,46 @@ export default function WaitingRoom() {
 
   const startGame = () => {
     socket.emit("start-game", roomCode);
+
   }
 
+useEffect(() => {
+  const handleSessionUpdated = (players: Player[]) => {
+    console.log("session-updated received", players);
+    setPlayers(players);
+    setPlayerCount(players.length);
+  };
+
+  const handleSessionEnded = () => {
+    alert("Session ended");
+    navigate("/");
+  };
+
+  socket.on("session-updated", handleSessionUpdated);
+  socket.on("session-ended", handleSessionEnded);
+
+  // Request the current state
+  socket.emit("get-session", roomCode);
+
+  return () => {
+    socket.off("session-updated", handleSessionUpdated);
+    socket.off("session-ended", handleSessionEnded);
+  };
+}, [roomCode, navigate]);
+
   useEffect(() => {
-    socket.on("session-updated", (players: Player[]) => {
-      console.log("session-updated received", players);
-      setPlayers(players);
-      setPlayerCount(players.length);
-    });
-
-    socket.on("session-ended", () => {
-      alert("Session ended");
-      navigate("/");
-    });
-
-    // Request the current state
-    socket.emit("get-session", roomCode);
-
-    return () => {
-      socket.off("session-updated");
-      socket.off("session-ended");
-    };
-  }, [roomCode]);
-
-  useEffect(() => {
-    socket.on("game-started", ({ roomCode }) => {
+    const handleGameStarted = ({ roomCode }: { roomCode: string }) => {
+      console.log("game-started event received, navigating to:", roomCode);
+      socket.off("game-started", handleGameStarted);
       navigate(`/game/${roomCode}`);
-    });
+    };
+
+    socket.on("game-started", handleGameStarted);
 
     return () => {
-      socket.off("game-started");
+      socket.off("game-started", handleGameStarted);
     };
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="soft-card">
