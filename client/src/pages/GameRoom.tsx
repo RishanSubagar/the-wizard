@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import socket from "../socket";
+import type { Role } from "../../../shared/types/role";
 
 export default function GameRoom() {
-  const [role, setRole] = useState<"CITIZEN" | "IMPOSTER" | null>(null);
+  const [role, setRole] = useState<Role>(null);
 
   useEffect(() => {
-    const handleAssignRole = ({ role }: { role: "CITIZEN" | "IMPOSTER" }) => {
+    const handleAssignRole = ({ role }: { role: Role }) => {
       console.log("Role received:", role);
       setRole(role);
     };
@@ -25,7 +26,7 @@ export default function GameRoom() {
         <div className="role-reveal">
           <h1>YOU ARE...</h1>
           <h2 className={`role ${role.toLowerCase()}`}>
-            {role === "IMPOSTER" ? "AN IMPOSTER" : "A CITIZEN"}
+            {role === "imposter" ? "AN IMPOSTER" : "A CITIZEN"}
           </h2>
         </div>
       )}

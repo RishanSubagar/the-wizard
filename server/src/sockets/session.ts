@@ -33,6 +33,8 @@ export function registerSessionSockets(io: Server, socket: Socket) {
             return;
         }
 
+        socket.join(roomCode);
+
         // Notify the joiner only
         socket.emit("join-success");
 
@@ -46,14 +48,20 @@ export function registerSessionSockets(io: Server, socket: Socket) {
     socket.on("leave-session", ({ roomCode }) => {
         const session = getSession(roomCode);
         if (!session) return;
-
-        // Remove player
+            
+        // Remove player from session state
         removePlayer(socket.id);
 
+        // Leave the socket.io room
         socket.leave(roomCode);
 
+        // Fetch updated session state
+        const updatedSession = getSession(roomCode);
+
         // Notify remaining players
-        io.to(roomCode).emit("session-updated", session.players);
+        if (updatedSession) {
+            io.to(roomCode).emit("session-updated", updatedSession.players);
+        }
     });
 
     /**
@@ -88,13 +96,15 @@ export function registerSessionSockets(io: Server, socket: Socket) {
         const session = getSession(roomCode);
         if (!session) return;
 
-        session.started = true;
-
         // Host check
         if (session.hostId !== socket.id) {
             socket.emit("start-game-error", "Only host can start the game.");
             return;
         }
+
+        // Prevent double-start
+        if (session.started) return;
+        session.started = true;
 
         const players = session.players;
 

@@ -1,6 +1,8 @@
+import type { Role } from "./role"
+
 type Player = {
     socketId: string;
-    role?: "citizen" | "imposter";
+    role?: Role;
 };
 
 export type { Player };
