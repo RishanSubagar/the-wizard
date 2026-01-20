@@ -17,7 +17,6 @@ export default function WaitingRoom() {
 
   const startGame = () => {
     socket.emit("start-game", roomCode);
-
   }
 
 useEffect(() => {

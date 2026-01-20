@@ -1,3 +1,1 @@
-type Role = "citizen" | "imposter" | null;
-
-export type { Role };
+export type Role = "citizen" | "imposter" | null;

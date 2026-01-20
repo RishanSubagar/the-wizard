@@ -10,8 +10,19 @@ export function createSession(socketId: string): Session {
     const newSession = {
         roomCode: roomCode,
         hostId: socketId,
-        players: [{ socketId }],
-        started: false
+        players: [{ 
+            socketId,
+            stats: {
+                messagesSent: 0,
+                avgMessageLength: 0,
+                responseLatencyMs: 0,
+                votesCast: 0,
+                votesRecieved: 0,
+                wordSimilarityScore: 0
+            }            
+         }],
+        started: false,
+        mode: null
     }
     sessions.set(roomCode, newSession);
     console.log(newSession)
@@ -65,7 +76,20 @@ export function deleteSession(roomCode: string) {
 function addPlayerToSession(session: Session, socketId: string): Session {
     return {
         ...session,
-        players: [...session.players, { socketId }],
+        players: [
+            ...session.players, 
+            {         
+                socketId,
+                stats: {
+                messagesSent: 0,
+                avgMessageLength: 0,
+                responseLatencyMs: 0,
+                votesCast: 0,
+                votesRecieved: 0,
+                wordSimilarityScore: 0,
+                },
+            }
+        ],
     };
 }
 
