@@ -1,9 +1,21 @@
 import { useEffect, useState } from "react";
 import socket from "../socket";
 import type { Role } from "../../../shared/types/role";
+import type { GameMode } from "../../../shared/types/gameMode"
+import { useParams } from "react-router-dom";
 
 export default function GameRoom() {
+  const { roomCode } = useParams();
   const [role, setRole] = useState<Role>(null);
+
+  const chooseMode = (mode: GameMode) => {
+    if (!roomCode) return;
+
+    socket.emit("select-game-mode", {
+      roomCode,
+      mode,
+    });
+  };
 
   useEffect(() => {
     const handleAssignRole = ({ role }: { role: Role }) => {
@@ -30,6 +42,9 @@ export default function GameRoom() {
           </h2>
         </div>
       )}
+
+      <button onClick={() => chooseMode("quick")}>⚡ Quick Play</button>
+      <button onClick={() => chooseMode("online")}>🌐 Online Play</button>
     </div>
   );
 }
